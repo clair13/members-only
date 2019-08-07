@@ -1,4 +1,6 @@
 class PostsController < ApplicationController
+  before_action :signed_in_user, only: [ :new, :create ]
+
   def index
     @posts = Post.all
   end
@@ -8,8 +10,7 @@ class PostsController < ApplicationController
   end
 
   def create
-    post_params
-    @post = Post.new(user_id: session[:user_id], title: post_params[:title], body: post_params[:body])
+    @post = current_user.posts.build(post_params)
     if @post.save
       redirect_to posts_path
     else
@@ -21,5 +22,12 @@ class PostsController < ApplicationController
 
   def post_params
     params.require(:post).permit(:title, :body)
+  end
+
+  def signed_in_user
+    unless logged_in?
+      flash[:danger] = "Please sign in"
+      redirect_to login_url
+    end
   end
 end
