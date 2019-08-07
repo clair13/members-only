@@ -7,6 +7,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true, length: { maximum: 300 },format: { with: VALID_EMAIL_REGEX }
   has_secure_password
   validates :password, presence: true, length: { maximum: 8 }
+  has_many :posts, dependent: :destroy
 
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
